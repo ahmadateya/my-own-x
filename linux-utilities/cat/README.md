@@ -1,4 +1,4 @@
 # cat command
 
 implementing the cat command in:
-- [C](./wcat) part of OSTEP course
+- [C](./wcat) language - part of [OSTEP](https://pages.cs.wisc.edu/~remzi/OSTEP/) book

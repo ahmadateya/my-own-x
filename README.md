@@ -5,5 +5,5 @@ practicing coding skills, learning how tools work and applying newly learned con
 
 
 ## Index
-- [Linux Utilities](./linux-utilities/README.md)
-- [The Hack Assembler](the-hack-assembler/README.md) part of the [Nand2Tetris](https://www.nand2tetris.org/) course
+- [Linux Utilities](./linux-utilities)
+- [The Hack Assembler](the-hack-assembler) part of the [Nand2Tetris](https://www.nand2tetris.org/) course
