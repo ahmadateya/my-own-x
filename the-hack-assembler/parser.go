@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 )
@@ -10,17 +11,20 @@ func parseAsmLine(asmLine string) string {
 	asmLine = strings.TrimSpace(asmLine)
 
 	if strings.HasPrefix(asmLine, "@") {
-		//fmt.Println("A-instruction: ", asmLine)
+		fmt.Println("A-instruction: ", asmLine)
 		return parseAInstruction(asmLine)
 	}
-	//fmt.Println("C-instruction: ", asmLine)
+	fmt.Println("C-instruction: ", asmLine)
 	return parseCInstruction(asmLine)
 }
 
 func parseAInstruction(line string) string {
 	// remove the @
 	line = strings.TrimPrefix(line, "@")
-
+	// remove the R if it's a variable
+	if line[0] == 'R' {
+		line = line[1:]
+	}
 	// convert the number to binary
 	address, err := strconv.Atoi(line)
 	checkErr(err)

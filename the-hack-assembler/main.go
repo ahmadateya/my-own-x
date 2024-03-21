@@ -41,11 +41,11 @@ func assemble(asmFile *os.File) string {
 	fileScanner := bufio.NewScanner(asmFile)
 	for fileScanner.Scan() {
 		asmLine := fileScanner.Text()
-		if strings.HasPrefix(asmLine, "//") || len(asmLine) == 0 {
+		if strings.Contains(asmLine, "//") || len(asmLine) == 0 {
 			continue
 		}
 		hackLine := parseAsmLine(asmLine)
-
+		fmt.Println("Hack line: ", hackLine)
 		hackRep = hackRep + hackLine + "\n"
 	}
 	return hackRep
