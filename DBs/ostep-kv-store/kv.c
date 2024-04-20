@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include "hashmap.h"
 
-const int CMD_TOKENS = 3;
+const int MAX_CMD_TOKENS = 3;
 const int MAX_KEY_LEN = 250;
 const int MAX_VALUE_LEN = 1000;
 const char *delim = ",";
@@ -31,13 +31,17 @@ void get_cmd_tokens(char full_command[], char** cmd_tokens) {
         strcpy(cmd_tokens[i], token);
         i++;
     }
-    // check on the number of tokens
-    if (i != CMD_TOKENS) {
-        bad_command("wrong number of tokens");
-    }
 }
 
 void validate_command(char* operation, char* key, char* value) {
+    if (*operation == 'p' && key == NULL && value == NULL) {
+        bad_command("wrong number of tokens");
+    }
+
+    if (key == NULL) {
+        return;
+    }
+
     if (*key == '\0') {
         bad_command("key is missing");
     }
@@ -53,28 +57,37 @@ void put(char* key, char* value) {
     insert(db_map, key, value);
 }
 
-void get(char* key, char* value) {
-    printf("get operation\n");
-    printf("key: %s\n", key);
-    printf("value: %s\n", value);
+void get(char* key) {
+    char* value = get_value(db_map, key);
+    if (value == NULL) {
+        printf("key not found\n");
+        return;
+    }
+    printf("%s\n", value);
 }
 
-void clear(char* key, char* value) {
-    printf("clear operation\n");
-    printf("key: %s\n", key);
-    printf("value: %s\n", value);
+void clear() {
+    remove_all_pairs(db_map);
 }
 
-void delete(char* key, char* value) {
-    printf("delete operation\n");
-    printf("key: %s\n", key);
-    printf("value: %s\n", value);
+void delete(char* key) {
+    char* value = get_value(db_map, key);
+    if (value == NULL) {
+        printf("key not found\n");
+        return;
+    } else {
+        remove_pair(db_map, key);
+        printf("key deleted\n");
+    }
 }
 
-void append(char* key, char* value) {
-    printf("append operation\n");
-    printf("key: %s\n", key);
-    printf("value: %s\n", value);
+void all() {
+    for (int i = 1; i <= db_map->capacity; i++) {
+        KeyValuePair* current = db_map->pairs[i];
+        if (current != NULL) {
+            printf("%s -> %s\n", current->key, current->value);
+        }
+    }
 }
 
 void load_db() {
@@ -118,7 +131,7 @@ void save_db() {
             fprintf(fptr, "%s,%s\n", pair->key, pair->value);
         }
     }
-    print_hashmap(db_map);
+    destroy_hashmap(db_map);
     fclose(fptr);
 }
 
@@ -128,8 +141,7 @@ int main(int argc, char *argv[]) {
 
     // iterate over the commands
     for (int i = 1; i < argc; i++) {
-        // array of strings (pointers of pointers) to store the command tokens
-        char** cmd_tokens = malloc(sizeof(char*) * CMD_TOKENS);
+        char** cmd_tokens = malloc(sizeof(char*) * MAX_CMD_TOKENS);
         get_cmd_tokens(argv[i], cmd_tokens);
         // validate command tokens
         validate_command(cmd_tokens[0], cmd_tokens[1], cmd_tokens[2]);
@@ -139,16 +151,16 @@ int main(int argc, char *argv[]) {
                 put(cmd_tokens[1], cmd_tokens[2]);
                 break;
             case 'g': // get the value
-                get(cmd_tokens[1], cmd_tokens[2]);
-                break;
-            case 'a': // append to the value
-                append(cmd_tokens[1], cmd_tokens[2]);
-                break;
-            case 'c': // clear the DB
-                clear(cmd_tokens[1], cmd_tokens[2]);
+                get(cmd_tokens[1]);
                 break;
             case 'd': // delete a key
-                delete(cmd_tokens[1], cmd_tokens[2]);
+                delete(cmd_tokens[1]);
+                break;
+            case 'a': // output all key-value pairs
+                all();
+                break;
+            case 'c': // clear the DB
+                clear();
                 break;
             default:
                 bad_command("unknown operation");
