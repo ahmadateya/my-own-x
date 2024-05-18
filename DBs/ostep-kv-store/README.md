@@ -18,3 +18,6 @@ gcc -o kv kv.c hashmap.c hashmap.h -Wall
 ./kv g,key3
 ```
  
+## TODO
+- [ ] Reimplement the hashmap with a linked list
+- [ ] Use Valgrind to SOLVE the memory leaks
