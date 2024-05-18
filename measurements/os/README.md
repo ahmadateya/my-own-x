@@ -1,4 +1,3 @@
 # OS measurements
 
-
-- [System Call overhead](syscall.c)
+- measure the [System Call time overhead](syscall.c)
